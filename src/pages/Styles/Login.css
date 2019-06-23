@@ -1,0 +1,26 @@
+.Login {
+  width: 100%;
+  height: 100%;
+}
+
+.Login__form-container {
+  box-shadow: 10px 10px #c52018;
+  border-radius: 1em;
+  width: 50%;
+}
+
+.Login__form-container > h2,
+.Login__form-container > p {
+  margin-top: 1em;
+  text-align: center;
+  font-weight: lighter;
+}
+
+.Login__logo {
+  position: absolute;
+  left: 50%;
+  margin-left: -80px;
+}
+.FormExampleForm {
+  padding: 1em;
+}
