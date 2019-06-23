@@ -8,11 +8,11 @@ const FormExampleForm = () => (
   <Form className="FormExampleForm">
     <Form.Field>
       <label>Email</label>
-      <input placeholder="Email" type="email" />
+      <input placeholder="Email" type="email" required />
     </Form.Field>
     <Form.Field>
       <label>Password</label>
-      <input placeholder="Password" type="password" />
+      <input placeholder="Password" type="password" required />
     </Form.Field>
     <Form.Field>
       <Checkbox label="Remenber me" />
