@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Grid, Dimmer, Loader } from 'semantic-ui-react';
+import { Search, Grid, Dimmer, Loader, Radio } from 'semantic-ui-react';
 import axios from 'axios';
 
 import { connect } from 'react-redux';
@@ -14,7 +14,8 @@ class Home extends React.Component {
     this.state = {
       firstLoading: true,
       value: '',
-      filtered: props.pokemons
+      filtered: props.pokemons,
+      onlyFavorites: false
     };
   }
 
@@ -24,6 +25,14 @@ class Home extends React.Component {
 
     let filtered = pokemons.filter(pokemon => pokemon.name.match(regex));
     this.setState({ filtered, value });
+  };
+
+  onSliderChange = (e, { checked: onlyFavorites }) => {
+    const { pokemons } = this.props;
+    let filtered = onlyFavorites
+      ? pokemons.filter(pokemon => pokemon.isFavorite)
+      : pokemons;
+    this.setState({ onlyFavorites: onlyFavorites, filtered });
   };
 
   async componentDidMount() {
@@ -53,14 +62,19 @@ class Home extends React.Component {
   }
 
   render() {
-    const { value, firstLoading, filtered: pokemons } = this.state;
+    const {
+      value,
+      firstLoading,
+      filtered: pokemons,
+      onlyFavorites
+    } = this.state;
     return (
       <Layout>
         <Grid>
           <Dimmer active={firstLoading}>
             <Loader />
           </Dimmer>
-          <Grid.Column widescreen={8} mobile={16} largeScreen={8}>
+          <Grid.Column widescreen={8} mobile={8} largeScreen={8}>
             <Search
               aligned="right"
               onSearchChange={this.onSearchChange}
@@ -69,6 +83,20 @@ class Home extends React.Component {
               placeholder="Type for search..."
               value={value}
             />
+          </Grid.Column>
+          <Grid.Column
+            widescreen={8}
+            mobile={8}
+            largeScreen={8}
+            verticalAlign="middle"
+          >
+            <Radio
+              slider
+              type="checkbox"
+              checked={onlyFavorites}
+              onChange={this.onSliderChange}
+            />
+            <span style={{ marginLeft: '1em' }}>Show only Favorites</span>
           </Grid.Column>
         </Grid>
         {pokemons.length > 0 ? (
