@@ -9,8 +9,8 @@ export default class PokemonList extends React.Component {
     const { pokemons } = this.props;
     return (
       <Grid>
-        {Object.keys(pokemons).map((key, i) => {
-          return <PokemonListItem pokemon={pokemons[key]} key={key} />;
+        {pokemons.map(pokemon => {
+          return <PokemonListItem pokemon={pokemon} key={pokemon.id} />;
         })}
       </Grid>
     );

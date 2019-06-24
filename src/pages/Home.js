@@ -1,50 +1,59 @@
-import React from "react";
-import { Search, Grid, Dimmer, Loader } from "semantic-ui-react";
-import axios from "axios";
+import React from 'react';
+import { Search, Grid, Dimmer, Loader } from 'semantic-ui-react';
+import axios from 'axios';
 
-import { connect } from "react-redux";
-import { addPokemon } from "../actions";
+import { connect } from 'react-redux';
+import { setPokemons } from '../actions';
 
-import PokemonList from "../components/PokemonList/index";
-import Layout from "../components/Layout";
+import PokemonList from '../components/PokemonList/index';
+import Layout from '../components/Layout';
 
 class Home extends React.Component {
-  state = {
-    firstLoading: true,
-    isLoading: false,
-    value: "",
-    results: []
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      firstLoading: true,
+      value: '',
+      filtered: props.pokemons
+    };
+  }
 
   onSearchChange = (e, { value }) => {
-    this.setState({ value });
+    const { pokemons } = this.props;
+    let regex = '.*' + value.toLowerCase().replace(/ /g, '.*') + '.*';
+
+    let filtered = pokemons.filter(pokemon => pokemon.name.match(regex));
+    this.setState({ filtered, value });
   };
 
   async componentDidMount() {
+    const { setPokemons, pokemons } = this.props;
+    let pokemonList;
     try {
-      const { addPokemon } = this.props;
-      const result = await axios.get(
-        "https://pokeapi.co/api/v2/pokemon?limit=50"
-      );
+      if (pokemons.length === 0) {
+        const result = await axios.get(
+          'https://pokeapi.co/api/v2/pokemon?limit=50'
+        );
 
-      const pokemonsList = result.data.results;
-
-      if (pokemonsList) {
-        await pokemonsList.map(async (item, key) => {
-          const pokemonDetail = await axios.get(item.url);
-          addPokemon(pokemonDetail.data);
-        });
-
-        this.setState({ firstLoading: false });
+        if (result.data && result.data.results) {
+          pokemonList = await Promise.all(
+            result.data.results.map(async item => {
+              const pokemonDetail = await axios.get(item.url);
+              return pokemonDetail.data;
+            })
+          );
+          setPokemons(pokemonList);
+        }
+      } else {
+        pokemonList = pokemons;
       }
-    } catch (err) {
-      console.log(err);
-    }
+
+      this.setState({ firstLoading: false, filtered: pokemonList });
+    } catch (err) {}
   }
 
   render() {
-    const { isLoading, value, firstLoading } = this.state;
-    const { pokemons } = this.props;
+    const { value, firstLoading, filtered: pokemons } = this.state;
     return (
       <Layout>
         <Grid>
@@ -54,15 +63,19 @@ class Home extends React.Component {
           <Grid.Column widescreen={8} mobile={16} largeScreen={8}>
             <Search
               aligned="right"
-              loading={isLoading}
               onSearchChange={this.onSearchChange}
               input={{ fluid: true }}
+              showNoResults={false}
               placeholder="Type for search..."
               value={value}
             />
           </Grid.Column>
         </Grid>
-        <PokemonList pokemons={pokemons} />
+        {pokemons.length > 0 ? (
+          <PokemonList pokemons={pokemons} />
+        ) : (
+          <div style={{ marginTop: '1em' }}>No results.</div>
+        )}
       </Layout>
     );
   }
@@ -75,8 +88,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  addPokemon: pokemon => {
-    dispatch(addPokemon(pokemon));
+  setPokemons: pokemon => {
+    dispatch(setPokemons(pokemon));
   }
 });
 

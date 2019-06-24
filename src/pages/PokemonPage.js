@@ -6,19 +6,19 @@ import Layout from '../components/Layout';
 import PokemonDetail from '../components/PokemonDetail';
 
 class PokemonPage extends React.Component {
-  objIsEmpty = obj => {
-    return Object.entries(obj).length === 0 && obj.constructor === Object;
-  };
-
   render() {
     const { pokemons } = this.props;
     const { id } = this.props.match.params;
 
-    if (this.objIsEmpty(pokemons)) return <Redirect exact to="/" />;
+    const pokemon = pokemons.find(pokemon => {
+      return pokemon.id == id;
+    });
+
+    if (pokemons.length <= 0 || !pokemon) return <Redirect exact to="/" />;
 
     return (
       <Layout>
-        <PokemonDetail pokemon={pokemons[id]} />
+        <PokemonDetail pokemon={pokemon} />
       </Layout>
     );
   }
