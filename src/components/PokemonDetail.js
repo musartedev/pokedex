@@ -16,7 +16,11 @@ export default class PokemonDetail extends React.Component {
             </span>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column computer={6} className="PokemonDetail__card-info">
+            <Grid.Column
+              computer={6}
+              mobile={16}
+              className="PokemonDetail__card-info"
+            >
               <Image
                 src={pokemon.sprites.front_default}
                 size="small"

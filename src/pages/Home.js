@@ -74,7 +74,7 @@ class Home extends React.Component {
           <Dimmer active={firstLoading}>
             <Loader />
           </Dimmer>
-          <Grid.Column widescreen={8} mobile={8} largeScreen={8}>
+          <Grid.Column widescreen={8} mobile={16} largeScreen={8}>
             <Search
               aligned="right"
               onSearchChange={this.onSearchChange}
@@ -86,7 +86,7 @@ class Home extends React.Component {
           </Grid.Column>
           <Grid.Column
             widescreen={8}
-            mobile={8}
+            mobile={16}
             largeScreen={8}
             verticalAlign="middle"
           >
