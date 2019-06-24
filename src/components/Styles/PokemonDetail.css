@@ -1,0 +1,9 @@
+.PokemonDetail__card-info {
+  box-shadow: 0.2em 0.4em 0.4em -0.2em #999;
+  border-radius: 20px;
+  padding-bottom: 1em;
+}
+
+.PokemonDetail__name-container > h1 {
+  margin-right: 0.2em;
+}

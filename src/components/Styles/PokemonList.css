@@ -1,0 +1,11 @@
+.PokemonListItem {
+  border-radius: 20px;
+  padding: 1em;
+  margin: 1em;
+  /* border: 1px solid #eee; */
+  box-shadow: 0.2em 0.4em 0.4em -0.2em #999;
+}
+
+.PokemonListItem:hover {
+  box-shadow: 0.4em 0.4em 1em -0.2em #999;
+}

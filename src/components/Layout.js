@@ -1,9 +1,8 @@
-import React from "react";
-import { Menu, Container, Image } from "semantic-ui-react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Menu, Container, Image } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
 
-import "./Styles/Layout.css";
-import pokedexLogo from "../images/pokemon.svg";
+import pokedexLogo from '../images/pokemon.svg';
 
 export default function Layout(props) {
   return (
@@ -14,7 +13,7 @@ export default function Layout(props) {
             <Image
               size="tiny"
               src={pokedexLogo}
-              style={{ marginRight: "1.5em" }}
+              style={{ marginRight: '1.5em' }}
             />
           </Menu.Item>
           <Menu.Item as={Link} to="/">
@@ -25,7 +24,7 @@ export default function Layout(props) {
           </Menu.Item>
         </Container>
       </Menu>
-      <Container style={{ marginTop: "7em" }}>{props.children}</Container>
+      <Container style={{ marginTop: '7em' }}>{props.children}</Container>
     </React.Fragment>
   );
 }
