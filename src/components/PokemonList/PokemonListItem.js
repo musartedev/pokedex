@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, Label, Divider, Grid, Icon } from 'semantic-ui-react';
-import { Redirect, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import '../Styles/PokemonList.css';
 
@@ -12,10 +12,10 @@ export default class PokemonListItem extends React.Component {
   render() {
     const { pokemon } = this.props;
 
-    const { isFav, redirect } = this.state;
+    const { isFav } = this.state;
     const favColor = isFav ? 'yellow' : 'grey';
     return (
-      <Grid.Column mobile={16} tablet={8} computer={4} key={pokemon.id}>
+      <Grid.Column mobile={16} tablet={8} computer={4}>
         <div className="PokemonListItem">
           <Icon
             name="favorite"
@@ -32,11 +32,12 @@ export default class PokemonListItem extends React.Component {
             </h2>
             <Divider />
             {pokemon.types.map(type => (
-              <Label color="red">{type.type.name}</Label>
+              <Label color="red" key={type.slot}>
+                {type.type.name}
+              </Label>
             ))}
           </Link>
         </div>
-        {redirect && <Redirect exact to="/pokemon" />}
       </Grid.Column>
     );
   }
