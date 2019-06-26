@@ -21,9 +21,17 @@ class Home extends React.Component {
 
   onSearchChange = (e, { value }) => {
     const { pokemons } = this.props;
-    let regex = '.*' + value.toLowerCase().replace(/ /g, '.*') + '.*';
+    const regex = '.*' + value.toLowerCase().replace(/ /g, '.*') + '.*';
 
-    let filtered = pokemons.filter(pokemon => pokemon.name.match(regex));
+    // Filter by name or type
+    const filtered = pokemons.filter(
+      pokemon =>
+        pokemon.name.match(regex) || // Match by name
+        // Match by type
+        pokemon.types.find(elem => {
+          return elem.type.name.match(regex);
+        })
+    );
     this.setState({ filtered, value });
   };
 
