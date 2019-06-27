@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import pokedexLogo from '../images/pokemon.svg';
 
-export default function Layout(props) {
+const Layout = props => {
   return (
     <React.Fragment>
       <Menu fixed="top" className="Layout__menu">
@@ -27,4 +27,6 @@ export default function Layout(props) {
       <Container style={{ marginTop: '7em' }}>{props.children}</Container>
     </React.Fragment>
   );
-}
+};
+
+export default Layout;
