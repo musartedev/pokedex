@@ -1,18 +1,16 @@
 import React from 'react';
-import { Search, Grid, Dimmer, Loader, Radio } from 'semantic-ui-react';
-// import axios from 'axios';
 
 import { connect } from 'react-redux';
-import * as actions from '../actions';
+import { loadPokemons, toggleLoader } from '../actions';
 
 import PokemonList from '../components/PokemonList/index';
 import Layout from '../components/Layout';
+import SearchBar from '../components/SearchBar';
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      firstLoading: true,
       value: '',
       filtered: props.pokemons,
       onlyFavorites: false
@@ -36,55 +34,27 @@ class Home extends React.Component {
   };
 
   async componentDidMount() {
-    if (this.props.pokemons.length === 0) {
-      await this.props.loadPokemons();
+    const { pokemons, toggleLoader, loadPokemons } = this.props;
+    if (pokemons.length === 0) {
+      toggleLoader(true);
+      await loadPokemons();
     }
 
-    this.setState((state, props) => ({
-      filtered: props.pokemons,
-      firstLoading: false
-    }));
+    this.setState((state, props) => ({ filtered: props.pokemons }));
+    toggleLoader(false);
   }
 
   render() {
-    const {
-      value,
-      firstLoading,
-      filtered: pokemons,
-      onlyFavorites
-    } = this.state;
+    const { value, filtered: pokemons, onlyFavorites } = this.state;
 
     return (
       <Layout>
-        <Grid>
-          <Dimmer active={firstLoading}>
-            <Loader />
-          </Dimmer>
-          <Grid.Column widescreen={8} mobile={8} largeScreen={8}>
-            <Search
-              aligned="right"
-              onSearchChange={this.onSearchChange}
-              input={{ fluid: true }}
-              showNoResults={false}
-              placeholder="Type for search..."
-              value={value}
-            />
-          </Grid.Column>
-          <Grid.Column
-            widescreen={8}
-            mobile={8}
-            largeScreen={8}
-            verticalAlign="middle"
-          >
-            <Radio
-              slider
-              type="checkbox"
-              checked={onlyFavorites}
-              onChange={this.onSliderChange}
-            />
-            <span style={{ marginLeft: '1em' }}>Show only Favorites</span>
-          </Grid.Column>
-        </Grid>
+        <SearchBar
+          value={value}
+          onlyFavorites={onlyFavorites}
+          onSearchChange={this.onSearchChange}
+          onSliderChange={this.onSliderChange}
+        />
         {pokemons.length > 0 ? (
           <PokemonList pokemons={pokemons} />
         ) : (
@@ -101,9 +71,9 @@ const mapStateToProps = state => {
   };
 };
 
-// const mapDispatchToProps = { loadPokemons };
+const mapDispatchToProps = { loadPokemons, toggleLoader };
 
 export default connect(
   mapStateToProps,
-  actions
+  mapDispatchToProps
 )(Home);

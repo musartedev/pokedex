@@ -3,6 +3,8 @@ import { SET_POKEMONS, ADD_POKEMON, CURRENT_POKEMON } from '../actions/types';
 import axios from '../api/AxiosConfig';
 import { getPokemons } from '../api/pokeapi';
 
+import { toggleLoader, setError } from './general';
+
 export const setPokemons = payload => ({
   type: SET_POKEMONS,
   payload
@@ -32,6 +34,7 @@ export const loadPokemons = limit => async dispatch => {
       dispatch(setPokemons(pokemonsList));
     }
   } catch (error) {
-    // manageErrorResponse()
+    dispatch(toggleLoader(false));
+    dispatch(setError(`Oops! Something went wrong.`));
   }
 };
