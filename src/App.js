@@ -1,8 +1,9 @@
 import React from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
+import reduxThunk from 'redux-thunk';
 
 import './App.css';
 
@@ -11,7 +12,7 @@ import Login from './pages/Login';
 import Home from './pages/Home';
 import PokemonPage from './pages/PokemonPage';
 
-const store = createStore(reducer);
+const store = createStore(reducer, {}, applyMiddleware(reduxThunk));
 
 function App() {
   return (

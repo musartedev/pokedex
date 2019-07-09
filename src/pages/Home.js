@@ -1,9 +1,9 @@
 import React from 'react';
 import { Search, Grid, Dimmer, Loader, Radio } from 'semantic-ui-react';
-import axios from 'axios';
+// import axios from 'axios';
 
 import { connect } from 'react-redux';
-import { setPokemons } from '../actions';
+import * as actions from '../actions';
 
 import PokemonList from '../components/PokemonList/index';
 import Layout from '../components/Layout';
@@ -32,33 +32,18 @@ class Home extends React.Component {
     let filtered = onlyFavorites
       ? pokemons.filter(pokemon => pokemon.isFavorite)
       : pokemons;
-    this.setState({ onlyFavorites: onlyFavorites, filtered });
+    this.setState({ onlyFavorites, filtered });
   };
 
   async componentDidMount() {
-    const { setPokemons, pokemons } = this.props;
-    let pokemonList;
-    try {
-      if (pokemons.length === 0) {
-        const result = await axios.get(
-          'https://pokeapi.co/api/v2/pokemon?limit=50'
-        );
+    if (this.props.pokemons.length === 0) {
+      await this.props.loadPokemons();
+    }
 
-        if (result.data && result.data.results) {
-          pokemonList = await Promise.all(
-            result.data.results.map(async item => {
-              const pokemonDetail = await axios.get(item.url);
-              return pokemonDetail.data;
-            })
-          );
-          setPokemons(pokemonList);
-        }
-      } else {
-        pokemonList = pokemons;
-      }
-
-      this.setState({ firstLoading: false, filtered: pokemonList });
-    } catch (err) {}
+    this.setState((state, props) => ({
+      filtered: props.pokemons,
+      firstLoading: false
+    }));
   }
 
   render() {
@@ -68,6 +53,7 @@ class Home extends React.Component {
       filtered: pokemons,
       onlyFavorites
     } = this.state;
+
     return (
       <Layout>
         <Grid>
@@ -115,13 +101,9 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  setPokemons: pokemon => {
-    dispatch(setPokemons(pokemon));
-  }
-});
+// const mapDispatchToProps = { loadPokemons };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  actions
 )(Home);
