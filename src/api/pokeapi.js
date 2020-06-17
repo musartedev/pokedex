@@ -1,3 +1,3 @@
-import axios from "axios";
+import axios from './AxiosConfig';
 
-const getPokemons = () => {};
+export const getPokemons = (limit = 50) => axios.get(`/pokemon?limit=${limit}`);

@@ -1,18 +1,16 @@
 import React from 'react';
-import { Search, Grid, Dimmer, Loader, Radio } from 'semantic-ui-react';
-import axios from 'axios';
 
 import { connect } from 'react-redux';
-import { setPokemons } from '../actions';
+import { loadPokemons, toggleLoader } from '../actions';
 
 import PokemonList from '../components/PokemonList/index';
 import Layout from '../components/Layout';
+import SearchBar from '../components/SearchBar';
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      firstLoading: true,
       value: '',
       filtered: props.pokemons,
       onlyFavorites: false
@@ -40,73 +38,31 @@ class Home extends React.Component {
     let filtered = onlyFavorites
       ? pokemons.filter(pokemon => pokemon.isFavorite)
       : pokemons;
-    this.setState({ onlyFavorites: onlyFavorites, filtered });
+    this.setState({ onlyFavorites, filtered });
   };
 
   async componentDidMount() {
-    const { setPokemons, pokemons } = this.props;
-    let pokemonList;
-    try {
-      if (pokemons.length === 0) {
-        const result = await axios.get(
-          'https://pokeapi.co/api/v2/pokemon?limit=50'
-        );
+    const { pokemons, toggleLoader, loadPokemons } = this.props;
+    if (pokemons.length === 0) {
+      toggleLoader(true);
+      await loadPokemons();
+    }
 
-        if (result.data && result.data.results) {
-          pokemonList = await Promise.all(
-            result.data.results.map(async item => {
-              const pokemonDetail = await axios.get(item.url);
-              return pokemonDetail.data;
-            })
-          );
-          setPokemons(pokemonList);
-        }
-      } else {
-        pokemonList = pokemons;
-      }
-
-      this.setState({ firstLoading: false, filtered: pokemonList });
-    } catch (err) {}
+    this.setState((state, props) => ({ filtered: props.pokemons }));
+    toggleLoader(false);
   }
 
   render() {
-    const {
-      value,
-      firstLoading,
-      filtered: pokemons,
-      onlyFavorites
-    } = this.state;
+    const { value, filtered: pokemons, onlyFavorites } = this.state;
+
     return (
       <Layout>
-        <Grid>
-          <Dimmer active={firstLoading}>
-            <Loader />
-          </Dimmer>
-          <Grid.Column widescreen={8} mobile={16} largeScreen={8}>
-            <Search
-              aligned="right"
-              onSearchChange={this.onSearchChange}
-              input={{ fluid: true }}
-              showNoResults={false}
-              placeholder="Type for search..."
-              value={value}
-            />
-          </Grid.Column>
-          <Grid.Column
-            widescreen={8}
-            mobile={16}
-            largeScreen={8}
-            verticalAlign="middle"
-          >
-            <Radio
-              slider
-              type="checkbox"
-              checked={onlyFavorites}
-              onChange={this.onSliderChange}
-            />
-            <span style={{ marginLeft: '1em' }}>Show only Favorites</span>
-          </Grid.Column>
-        </Grid>
+        <SearchBar
+          value={value}
+          onlyFavorites={onlyFavorites}
+          onSearchChange={this.onSearchChange}
+          onSliderChange={this.onSliderChange}
+        />
         {pokemons.length > 0 ? (
           <PokemonList pokemons={pokemons} />
         ) : (
@@ -123,11 +79,7 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  setPokemons: pokemon => {
-    dispatch(setPokemons(pokemon));
-  }
-});
+const mapDispatchToProps = { loadPokemons, toggleLoader };
 
 export default connect(
   mapStateToProps,
