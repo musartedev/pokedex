@@ -1,4 +1,4 @@
-import { SET_POKEMONS, ADD_POKEMON, CURRENT_POKEMON } from '../actions/types';
+import { SET_POKEMONS, UPDATE_POKEMONS, CURRENT_POKEMON } from '../actions/types';
 
 import axios from '../api/AxiosConfig';
 import { getPokemons } from '../api/pokeapi';
@@ -10,8 +10,8 @@ export const setPokemons = payload => ({
   payload
 });
 
-export const addPokemon = payload => ({
-  type: ADD_POKEMON,
+export const updatePokemons = payload => ({
+  type: UPDATE_POKEMONS,
   payload
 });
 

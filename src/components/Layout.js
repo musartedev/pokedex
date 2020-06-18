@@ -9,7 +9,6 @@ import pokedexLogo from '../images/pokemon.svg';
 class Layout extends React.Component {
   render() {
     const { loading, errorMsg, clearError } = this.props;
-    // console.log(loading);
     return (
       <React.Fragment>
         <Menu fixed="top" className="Layout__menu">

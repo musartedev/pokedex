@@ -1,27 +1,37 @@
 import React from 'react';
-import { Grid, Image, List, Icon, Dropdown } from 'semantic-ui-react';
+import { Grid, Image, List, Dropdown } from 'semantic-ui-react';
+import FavoriteStart from './common/FavoriteStar';
 
 import './Styles/PokemonDetail.css';
 
-const PokemonDetail = props => {
-  const { pokemon } = props;
+const PokemonDetail = ({ pokemon, updatePokemon }) => {
+  const toggleFavorite = () => {
+    const updatedPokemon = {
+      ...pokemon,
+      isFavorite: !pokemon.isFavorite,
+    };
+    updatePokemon(pokemon.id, updatedPokemon);
+  };
   return (
     <div>
-      <Grid textAlign="center">
-        <Grid.Row className="PokemonDetail__name-container">
+      <Grid textAlign='center'>
+        <Grid.Row className='PokemonDetail__name-container'>
           <h1>{pokemon.name}</h1>
           <span>
-            <Icon name="favorite" color="grey" />
+            <FavoriteStart
+              isFavorite={pokemon.isFavorite}
+              toggleFavorite={toggleFavorite}
+            />
           </span>
         </Grid.Row>
         <Grid.Row>
           <Grid.Column
             computer={6}
             mobile={16}
-            className="PokemonDetail__card-info"
+            className='PokemonDetail__card-info'
           >
-            <Image src={pokemon.sprites.front_default} size="small" centered />
-            <List animated verticalAlign="middle" horizontal>
+            <Image src={pokemon.sprites.front_default} size='small' centered />
+            <List animated verticalAlign='middle' horizontal>
               <List.Item>
                 <List.Content>
                   <List.Header># ID</List.Header>
@@ -62,14 +72,14 @@ const PokemonDetail = props => {
                   <List.Header>Move(s)</List.Header>
                   <List.Description>
                     <Dropdown
-                      placeholder="Explore moves"
+                      placeholder='Explore moves'
                       style={{ marginTop: '1em' }}
                       selection
-                      options={pokemon.moves.map(elem => {
+                      options={pokemon.moves.map((elem) => {
                         return {
                           key: elem.move.name,
                           text: elem.move.name,
-                          value: elem.move.name
+                          value: elem.move.name,
                         };
                       })}
                     />

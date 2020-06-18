@@ -4,12 +4,17 @@ import { Grid } from 'semantic-ui-react';
 import PokemonListItem from './PokemonListItem';
 import '../Styles/PokemonList.css';
 
-const PokemonList = props => {
-  const { pokemons } = props;
+const PokemonList = ({ pokemons, updatePokemon }) => {
   return (
     <Grid>
-      {pokemons.map(pokemon => {
-        return <PokemonListItem pokemon={pokemon} key={pokemon.id} />;
+      {pokemons.map((pokemon) => {
+        return (
+          <PokemonListItem
+            updatePokemon={updatePokemon}
+            pokemon={pokemon}
+            key={pokemon.id}
+          />
+        );
       })}
     </Grid>
   );

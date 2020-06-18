@@ -1,87 +1,95 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { connect } from 'react-redux';
-import { loadPokemons, toggleLoader } from '../actions';
+import { loadPokemons, toggleLoader, setPokemons } from '../actions';
 
 import PokemonList from '../components/PokemonList/index';
 import Layout from '../components/Layout';
 import SearchBar from '../components/SearchBar';
 
-class Home extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: '',
-      filtered: props.pokemons,
-      onlyFavorites: false
+const Home = ({ pokemons, toggleLoader, loadPokemons, setPokemons }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+
+  useEffect(() => {
+    const fetchPokemons = async () => {
+      if (pokemons.length === 0) {
+        toggleLoader(true);
+        await loadPokemons();
+      }
+
+      toggleLoader(false);
     };
-  }
+    fetchPokemons();
+  }, []);
 
-  onSearchChange = (e, { value }) => {
-    const { pokemons } = this.props;
-    const regex = '.*' + value.toLowerCase().replace(/ /g, '.*') + '.*';
+  const onSearchChange = (e, { value }) => {
+    setSearchTerm(value);
+  };
 
-    // Filter by name or type
-    const filtered = pokemons.filter(
-      pokemon =>
-        pokemon.name.match(regex) || // Match by name
-        // Match by type
-        pokemon.types.find(elem => {
-          return elem.type.name.match(regex);
-        })
+  const onSliderChange = (e, { checked }) => {
+    setShowOnlyFavorites(checked);
+  };
+
+  const handleUpdatePokemon = (pokemonId, updatedPokemon) => {
+    const pokemonIndex = pokemons.findIndex(
+      (pokemon) => pokemon.id === pokemonId
     );
-    this.setState({ filtered, value });
+    const updatedPokemons = [...pokemons];
+
+    updatedPokemons[pokemonIndex] = updatedPokemon;
+    setPokemons(updatedPokemons);
   };
 
-  onSliderChange = (e, { checked: onlyFavorites }) => {
-    const { pokemons } = this.props;
-    let filtered = onlyFavorites
-      ? pokemons.filter(pokemon => pokemon.isFavorite)
-      : pokemons;
-    this.setState({ onlyFavorites, filtered });
-  };
+  const renderPokemonsList = () => {
+    if (pokemons.length) {
+      const regex = '.*' + searchTerm.toLowerCase().replace(/ /g, '.*') + '.*';
 
-  async componentDidMount() {
-    const { pokemons, toggleLoader, loadPokemons } = this.props;
-    if (pokemons.length === 0) {
-      toggleLoader(true);
-      await loadPokemons();
+      // Filter by name or type
+      let filtered = pokemons.filter(
+        (pokemon) =>
+          pokemon.name.match(regex) || // Match by name
+          // Match by type
+          pokemon.types.find((elem) => {
+            return elem.type.name.match(regex);
+          })
+      );
+
+      if (showOnlyFavorites) {
+        filtered = filtered.filter((pokemon) => pokemon.isFavorite);
+      }
+
+      if (filtered.length) {
+        return (
+          <PokemonList
+            pokemons={filtered}
+            updatePokemon={handleUpdatePokemon}
+          />
+        );
+      }
     }
+    return <div style={{ marginTop: '1em' }}>No results.</div>;
+  };
 
-    this.setState((state, props) => ({ filtered: props.pokemons }));
-    toggleLoader(false);
-  }
+  return (
+    <Layout>
+      <SearchBar
+        value={searchTerm}
+        onlyFavorites={showOnlyFavorites}
+        onSearchChange={onSearchChange}
+        onSliderChange={onSliderChange}
+      />
+      {renderPokemonsList()}
+    </Layout>
+  );
+};
 
-  render() {
-    const { value, filtered: pokemons, onlyFavorites } = this.state;
-
-    return (
-      <Layout>
-        <SearchBar
-          value={value}
-          onlyFavorites={onlyFavorites}
-          onSearchChange={this.onSearchChange}
-          onSliderChange={this.onSliderChange}
-        />
-        {pokemons.length > 0 ? (
-          <PokemonList pokemons={pokemons} />
-        ) : (
-          <div style={{ marginTop: '1em' }}>No results.</div>
-        )}
-      </Layout>
-    );
-  }
-}
-
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    pokemons: state.pokemons.list
+    pokemons: state.pokemons.list,
   };
 };
 
-const mapDispatchToProps = { loadPokemons, toggleLoader };
+const mapDispatchToProps = { loadPokemons, toggleLoader, setPokemons };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
