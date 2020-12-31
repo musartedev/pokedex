@@ -16,7 +16,7 @@
 `npm run dev`
 
 ## 🛠 Despliegue
-1. Una vez instsaladas las dependencias, puedes hacer el build
+1. Una vez instaladas las dependencias, puedes hacer el build
 `npm build:ddl && npm build`
 
 ## 🦀 Base de Datos Pokemon
